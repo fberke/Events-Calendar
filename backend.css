@@ -1,0 +1,210 @@
+/***************************************/
+/*            PROCALENDAR              */
+/***************************************/
+.eventscalendar {
+	margin: 10px 0;
+}
+.eventscalendar table {
+	width: 100%;
+	border-collapse: collapse;
+	text-align: center;
+	vertical-align: middle;
+}
+.eventscalendar table a,
+.eventscalendar table a:hover { /* reset possible inherited values */
+	text-decoration: none;
+	border: 0;
+	padding: 0;
+	margin: 0;
+	color: #000;
+	background: transparent;
+}
+.eventscalendar caption {
+	font-size: 1.2em;
+	font-weight: bold;
+	padding: 5px;
+}
+.eventscalendar caption div.previous {
+	float: left;
+}
+.eventscalendar caption div.previous span {
+}
+.eventscalendar caption div.next span {
+}
+.eventscalendar caption div.previous span a,
+.eventscalendar caption div.next span a {
+	padding: 2px;
+	color: blue;
+}
+.eventscalendar caption div.next {
+	float: right;
+}
+.eventscalendar thead tr {
+	border-top: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+}
+.eventscalendar thead th {
+	padding: 8px 0;
+	background-color: #efefef;
+}
+.eventscalendar thead abbr {
+	cursor: help;
+}
+.eventscalendar tbody {
+	border-bottom: 1px solid #ccc;
+}
+.eventscalendar tbody td {
+	padding: 8px 0;
+}
+.eventscalendar tbody td.noday {
+	background-color: transparent;
+}
+.eventscalendar tbody td.isevent {
+	padding: 0;
+	border: 1px solid #fff;
+}
+.eventscalendar tbody td.isevent>a {
+	padding: 7px 0;
+	display: block;
+	background-color: orange;
+}
+.eventscalendar tbody td.today,
+.eventscalendar tbody td.today.isevent {
+	border: 1px solid #ccc;
+}
+.eventscalendar tbody td.today.isevent a {
+/*	padding: 7px 0;*/
+}
+/*
+	this class is used to hide some information from the visual style
+	Mo<span class="display_outside">nday</span> is more accessible than
+	solutions with 'abbr' or something else.
+	'display:none' or 'visibility:none' don't work here
+*/
+.eventscalendar .position_outside {
+	position: absolute;
+	left: -999em;
+}
+
+/***************************************/
+/*        OTHER BACKEND STUFF          */
+/***************************************/
+code {font-weight:bold;}
+h3 {font-weight:bold;font-size:1.2em;letter-spacing:-1px;}
+hr {height:0;line-height:0;border:0;border-top:1px solid #bbb;width:100%;margin:10px 0;padding:0;}
+
+.event_list {
+	margin-bottom:20px;
+}
+.event_list_table {width:100%;background:#f0f0f0;}
+.event_list_table caption {
+	padding: 5px 0;
+	background-color: #cfcfcf;
+	font-weight: bold;
+	font-size: 1.1em;
+}
+.event_list tr {
+	background:#f0f0f0;
+	height:22px;
+	line-height:22px;
+	border-bottom: 1px solid #cfcfcf;
+}
+.event_list tbody tr:nth-child(even) {
+	background:#efefef;
+}
+.event_list tr:hover {
+	background:#eaeff6;
+}
+.event_list td {
+	padding:0 10px;
+	height:22px;
+	line-height:22px;
+}
+
+#event_entry {width:100%;border-top:1px solid #ccc;padding-top:15px;clear:both;}
+
+input {font-size:11px;padding:2px;}
+
+.details_section {
+	overflow: hidden;
+	margin-bottom: .5em;
+	clear: left;
+}
+
+.field_area {height:90px;line-height:90px;}
+label { /* formerly .field_title */
+	float:left;
+	width:180px;
+}
+label.main_editor {
+	float: none;
+}
+.edit_label td {width:10px;}
+
+.edit_field,
+.edit_description {width:400px;}
+.edit_select {width:408px;padding:0 0 0 2px;}
+.edit_select_short {width:320px;padding:0 0 0 2px;}
+.edit_field_short {width:320px;}
+.edit_date,
+.edit_time {width:80px;}
+
+.buttonrow {width:100%;margin-bottom:15px;}
+.buttonrow input {
+	margin-right: 10px;
+}
+.edit_button, 
+.mod_endar_edit_css {padding:1px 5px;width:120px;font-size:11px;}
+.float_right {float:right;}
+
+.customfields textarea {width:98%;height:80px;margin-bottom:20px;}
+
+/*
+Needed css for DatePicker calendar. 
+DON'T CONVERT CAPITALS TO LOWERCASE! Datepicker will not function if set to lowercase!
+*/
+TABLE.jCalendar {border-bottom:#000 1px solid;border-left:#000 1px solid;border-spacing:2px;border-collapse:separate;background:#aaa;border-top:#000 1px solid;border-right:#000 1px solid;}
+TABLE.jCalendar TH {background:#333;color:#fff;font-weight:bold;padding:3px 5px;}
+TABLE.jCalendar TD {text-align:center;background:#ccc;color:#000;padding:3px 5px;}
+TABLE.jCalendar TD.other-month {background:#ddd;color:#aaa;}
+TABLE.jCalendar TD.today {background:#666;color:#fff;}
+TABLE.jCalendar TD.dp-hover.selected {background:#f33;color:#fff;}
+
+DIV.dp-popup {position:relative;line-height:1.2em;width:186px;font-family:arial, sans-serif;background:#ccc;font-size:10px;padding:2px;}
+DIV#dp-popup {z-index:199;position:absolute;}
+DIV.dp-popup H2 {text-align:center;font-size:12px;margin:2px 0;padding:0;}
+
+A#dp-close {text-align:center;display:block;font-size:11px;padding:4px 0;}
+A#dp-close:hover {text-decoration:underline;}
+
+DIV.dp-popup A {color:#000;text-decoration:none;padding:3px 2px 0;}
+DIV.dp-popup DIV.dp-nav-prev {position:absolute;width:100px;top:2px;left:4px;}
+DIV.dp-popup DIV.dp-nav-prev A {float:left;cursor:pointer;}
+DIV.dp-popup DIV.dp-nav-next A {cursor:pointer;float:right;}
+DIV.dp-popup DIV.dp-nav-next {position:absolute;width:100px;top:2px;right:4px;}
+DIV.dp-popup A.disabled {color:#aaa;cursor:default;}
+DIV.dp-popup TD {cursor:pointer;}
+
+INPUT.dp-applied {width:140px;float:left;}
+
+A.dp-choose-date {text-indent:-2000px;width:16px;display:block;background:url('./js/calendar.png') no-repeat;float:left;height:16px;overflow:hidden;margin:3px;padding:0;}
+A.dp-disabled.dp-choose-date {cursor:default;}
+
+#calendar-me {margin:20px;}
+
+TABLE.jCalendar TD.selected,
+TABLE.jCalendar TR.selectedWeek TD {background:#f66;color:#fff;}
+TABLE.jCalendar TD.dp-hover,
+TABLE.jCalendar TR.eventiveWeekHover TD {background:#fff;color:#000;}
+TABLE.jCalendar TD.disabled,
+TABLE.jCalendar TD.dp-hover.disabled,TABLE.jCalendar TD.unselectable,
+TABLE.jCalendar TD.unselectable:hover,
+TABLE.jCalendar TD.dp-hover.unselectable {background:#bbb;color:#888;}
+
+DIV.dp-popup DIV.dp-nav-prev A.disabled,
+DIV.dp-popup DIV.dp-nav-next A.disabled,
+DIV.dp-popup TD.disabled {cursor:default;}
+
+#start_time,
+#end_time {vertical-align:top;}
+

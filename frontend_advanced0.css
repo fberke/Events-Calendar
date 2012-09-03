@@ -1,0 +1,240 @@
+
+.eventscalendar {
+    margin: 0 auto;
+}
+.eventscalendar table {
+    border-collapse: collapse;
+    margin: 0 auto;
+    text-align: center;
+    vertical-align: middle;
+    width: 100%;
+}
+.eventscalendar table a, .eventscalendar table a:hover {
+    background: none repeat scroll 0 0 transparent;
+    border: 0 none;
+    color: #000000;
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+}
+.eventscalendar caption {
+    font-size: 1.2em;
+    font-weight: bold;
+    padding: 5px;
+}
+.eventscalendar caption div.previous {
+    float: left;
+}
+.eventscalendar caption div.previous span {
+}
+.eventscalendar caption div.next span {
+}
+.eventscalendar caption div.previous span a, .eventscalendar caption div.next span a {
+    color: blue;
+    padding: 2px;
+}
+.eventscalendar caption div.next {
+    float: right;
+}
+.eventscalendar thead tr {
+    border-bottom: 1px solid #CCCCCC;
+    border-top: 1px solid #CCCCCC;
+}
+.eventscalendar thead th {
+    background-color: #EFEFEF;
+    float: left;
+    padding: 8px 0;
+    width: 14.2%;
+}
+.eventscalendar thead abbr {
+    cursor: help;
+}
+.eventscalendar tbody {
+    border-bottom: 1px solid #CCCCCC;
+}
+.eventscalendar tbody td {
+    display: block;
+    float: left;
+    padding: 0;
+    position: relative;
+    width: 14.2%;
+}
+.eventscalendar tbody td.noday {
+    background-color: transparent;
+}
+.eventscalendar tbody td span {
+    border: 1px solid transparent;
+    display: block;
+    margin: 1px;
+    padding: 6px 0;
+}
+.eventscalendar tbody td.today span {
+	border: 1px solid blue;
+}
+.eventscalendar tbody td.isevent {
+    padding: 0;
+}
+.eventscalendar tbody td.isevent > a {
+    background-color: orange;
+    border: 1px solid;
+    display: block;
+    margin: 1px;
+    padding: 6px 0;
+}
+
+.eventscalendar tbody td.today.isevent > a {
+	border-color: blue;
+}
+.eventscalendar tbody td > div {
+    background-color: #666666;
+    left: -999em;
+    margin-right: 16em;
+    padding: 2px;
+    position: absolute;
+    text-align: left;
+    width: 16em;
+    margin-left: 1px;
+}
+.eventscalendar tbody td:hover > div {
+    bottom: 100%;
+    float: right;
+    left: auto;
+    /*
+    Uncomment this if you want the tooltip open to the left
+    right: 0;
+    */
+}
+.eventscalendar tbody td div h5 {
+    color: #FFFFFF;
+}
+.eventscalendar tbody td div h5, .eventscalendar tbody td div h6 {
+    font-size: 100.01%;
+    margin: 0.1em 0;
+    padding: 0;
+}
+.eventscalendar tbody td div p {
+    margin: 0;
+    padding: 0;
+}
+.eventscalendar tbody td div ul {
+    list-style: none outside none;
+    margin: 0;
+    padding: 0;
+}
+.eventscalendar tbody td a > a {
+    background-color: transparent;
+    border: medium none;
+}
+.eventscalendar .position_outside {
+    left: -999em;
+    position: absolute;
+}
+#event_list {
+    margin: 10px 0;
+}
+#event_list ul {
+    list-style: none outside none;
+    margin: 0;
+    padding: 0;
+}
+#event_list ul ul li {
+    border-bottom: 1px solid #CCCCCC;
+    margin-bottom: 10px;
+    overflow: hidden;
+    padding: 0 10px;
+}
+#event_list div.content_left {
+    float: left;
+    padding-right: 1%;
+    width: 63%;
+}
+#event_list div.content_right {
+    border-left: 1px solid #CCCCCC;
+    float: right;
+    padding-left: 1%;
+    width: 33%;
+}
+#event_list table {
+    border-collapse: collapse;
+    vertical-align: top;
+    width: 100%;
+}
+#event_entry {
+    min-height: 350px;
+}
+#event_entry h1 {
+    margin-top: 0;
+    padding-top: 0;
+}
+#event_entry .details_section {
+    line-height: 15px;
+    margin-bottom: 8px;
+}
+#event_entry aside {
+    background: none repeat scroll 0 0 #EEEEEE;
+    border: 1px solid #CCCCCC;
+    float: right;
+    margin: 0 0 15px 15px;
+    padding: 10px;
+    width: 170px;
+}
+#event_entry aside h4 {
+}
+#event_entry aside h4:first-child {
+    margin-top: 0;
+    padding-top: 0;
+}
+div.go_back a {
+    font-weight: bold;
+    text-decoration: none;
+}
+div.go_back a:before {
+    content: "« ";
+}
+ul.drop_event_list {
+    margin: 0;
+    padding: 0;
+}
+.drop_event_list li {
+    list-style-type: none;
+}
+.drop_event_list li a > span {
+    color: #000000;
+    display: block;
+    padding: 5px;
+}
+.drop_event_list li a > span:hover {
+    background-color: #AAAAAA;
+}
+.drop_event_list li span.date_time {
+    font-style: italic;
+}
+.drop_event_list li h4 {
+    margin: 3px 0;
+}
+.drop_event_list li p {
+    line-height: normal;
+    margin: 2px 0;
+}
+.drop_event_list li p.custom1 {
+}
+.drop_event_list li p.custom2 {
+}
+table.inner {
+    border-collapse: collapse;
+}
+table.inner td {
+    border: 1px solid #CCCCCC;
+    padding: 2px;
+}
+table.inner .event {
+    color: #01457F;
+    font-weight: bold;
+}
+table.inner .event:hover {
+    color: #F47325;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+

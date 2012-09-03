@@ -1,0 +1,276 @@
+/*
+	.eventscalendar = the eventual displayed calandar
+	#event_list = the list of events for the displayed month
+	.event_entry = details page of an event
+*/
+
+/***************************************/
+/*           EVENTS CALENDAR           */
+/***************************************/
+.eventscalendar {
+	margin: 10px 0;
+}
+.eventscalendar table {
+	width: 100%;
+	border-collapse: collapse;
+	text-align: center;
+	vertical-align: middle;
+}
+.eventscalendar table a,
+.eventscalendar table a:hover { /* reset possible inherited values */
+	text-decoration: none;
+	border: 0;
+	padding: 0;
+	margin: 0;
+	color: #000;
+	background: transparent;
+}
+.eventscalendar caption {
+	font-size: 1.2em;
+	font-weight: bold;
+	padding: 5px;
+}
+.eventscalendar caption div.previous {
+	float: left;
+}
+.eventscalendar caption div.previous span {
+}
+.eventscalendar caption div.next span {
+}
+.eventscalendar caption div.previous span a,
+.eventscalendar caption div.next span a {
+	padding: 2px;
+	color: blue;
+}
+.eventscalendar caption div.next {
+	float: right;
+}
+.eventscalendar thead tr {
+	border-top: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+}
+.eventscalendar thead th {
+	padding: 8px 0;
+	background-color: #efefef;
+	float: left;
+	width: 14%;
+}
+.eventscalendar thead abbr {
+	cursor: help;
+}
+.eventscalendar tbody {
+	border-bottom: 1px solid #ccc;
+}
+.eventscalendar tbody td {
+	padding: 7px 0;
+	position: relative;
+	display: block;
+	float: left;
+	width: 14%;
+}
+.eventscalendar tbody td.noday {
+	background-color: transparent;
+}
+.eventscalendar tbody td.isevent {
+	padding: 0;
+	border: 1px solid #fff;
+}
+.eventscalendar tbody td.isevent>a {
+	padding: 7px 0;
+	display: block;
+	background-color: orange;
+}
+.eventscalendar td.today.isevent {
+	border: 1px solid #ccc;
+}
+.eventscalendar tbody td.today.isevent>a {
+/*	padding: 7px 0;*/
+}
+/*
+	this class is used to hide some information from the visual style
+	Mo<span class="display_outside">nday</span> is more accessible than
+	solutions with 'abbr' or something else.
+	'display:none' or 'visibility:none' don't work here
+*/
+.eventscalendar tbody td>div {
+	position: absolute;
+	width: 16em;
+	left: -999em;
+	background-color: #666;
+	padding: 2px;
+	text-align: left;
+	
+	/*display: none;*/
+}
+.eventscalendar tbody td:hover>div {
+	left: auto;
+	
+	/*position: absolute;*/
+	bottom: 100%;
+	/*display: block;*/
+	
+}
+.eventscalendar tbody td div h5 {
+	color: #fff;
+}
+.eventscalendar tbody td div h5,
+.eventscalendar tbody td div h6 {
+	font-size: 100.01%;
+	margin: .1em 0;
+	padding: 0;
+}
+.eventscalendar tbody td div p {
+	margin: 0;
+	padding: 0;
+}
+.eventscalendar tbody td div ul {
+	padding: 0;
+	margin: 0;
+	list-style: none;
+}
+.eventscalendar tbody td a>a {
+	background-color: transparent;
+	border: none;
+}
+.eventscalendar .position_outside {
+	position: absolute;
+	left: -999em;
+}
+
+/***************************************/
+/*              EVENTLIST              */
+/***************************************/
+#event_list {
+	margin: 10px 0;
+}
+#event_list ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+#event_list ul ul li {
+	overflow: hidden;
+	padding: 0px 10px;
+	border-bottom: 1px solid #ccc;
+	margin-bottom: 10px;
+}
+#event_list div.content_left {
+	width: 63%;
+	float: left;
+	padding-right: 1%;
+}
+#event_list div.content_right {
+	float: right;
+	width: 33%;
+	padding-left: 1%;
+	border-left: 1px solid #ccc;
+}
+
+#event_list table {
+	width: 100%;
+	border-collapse: collapse;
+	vertical-align: top;
+}
+/*
+#event_list thead tr {
+	border-top: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+}
+#event_list thead th {
+	padding: 8px 0;
+	background-color: #efefef;
+}
+#event_list tbody {
+	border-bottom: 1px solid #ccc;
+}
+#event_list tbody td {
+	padding: 4px 2px;
+}
+#event_list tbody tr:nth-child(even) {
+	background:#efefef;
+}
+#event_list tbody tr:hover {
+	background:#ccc;
+}
+*/
+/***************************************/
+/*           EVENT_DETAILS             */
+/***************************************/
+#event_entry {
+	min-height:350px;
+}
+#event_entry h1 {
+	padding-top: 0;
+	margin-top: 0;
+}
+#event_entry .details_section {
+	line-height:15px;
+	margin-bottom:8px;
+}
+#event_entry aside {
+	float:right;
+	width:170px;
+	padding:10px;
+	border:1px solid #ccc;
+	background:#f4f4f4;
+	margin: 0 0 15px 15px;
+	background:#eee;
+}
+#event_entry aside h4 {
+	font-size: normal;
+}
+#event_entry aside h4:first-child {
+	padding-top: 0;
+	margin-top: 0;
+}
+
+div.go_back a {
+	font-weight:bold;
+	text-decoration:none;
+}
+div.go_back a:before {
+	content: "« ";
+}
+
+/***************************************/
+/*  STYLES FOR THE EVENTLIST DROPLET   */
+/***************************************/
+ul.drop_event_list {
+	margin: 0;
+	padding: 0;
+}
+.drop_event_list li {
+	list-style-type: none;
+}
+.drop_event_list li a>span {
+	display: block;
+	padding: 5px;
+	color: #000;
+}
+.drop_event_list li a>span:hover {
+	background-color: #aaa;
+}
+	
+.drop_event_list li span.date_time {
+	font-style: italic;
+}
+.drop_event_list li h4 {
+	margin: 3px 0;
+}
+.drop_event_list li p {
+	line-height: normal;
+	margin: 2px 0;
+}
+.drop_event_list li p.custom1 {
+}
+.drop_event_list li p.custom2 {
+}
+
+/***************************************/
+/*    STYLES FOR THE MINIJS DROPLET    */
+/***************************************/
+/* copy these to your normal template stylesheet if you want to show the minicaljs on every page */
+table.inner {border-collapse:collapse;}
+table.inner td {border:1px solid #ccc;padding:2px;}
+table.inner .event {color:#01457f;font-weight:bold;}
+table.inner .event:hover {font-weight:bold;cursor:pointer;color:#f47325;}
