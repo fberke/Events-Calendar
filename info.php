@@ -23,14 +23,14 @@ if (defined('WB_PATH')) {
 $module_directory	= 'eventscalendar';
 $module_name		= 'Events Calendar';
 $module_function	= 'page';
-$module_version	= '1.4.98';
+$module_version	= '1.5.2';
 $module_platform	= '1.x';
-$module_author	= 'David Ilicz Klementa, Burkhard Hekers, Jurgen Nijhuis, John Maats, Frank Berke';
+$module_author	= 'Frank Berke';
 $module_license	= 'GNU General Public License';
 $module_license_terms = '-';
-$module_description	= 'Accessible and versatile event calendar for WB and Lepton CMS, based on ProCalendar; requires DWOO module.';
-$module_home		= 'http://lepton-cms.org';
-$module_guid		= 'e6eccb3a-a849-41f4-86d5-d4e6761a24be';
+$module_description	= 'Accessible and versatile event calendar for WB and Lepton CMS; requires DWOO module.';
+$module_home		= 'https://github.com/fberke/Events-Calendar';
+$module_guid		= 'cb47fc9f-7aa7-413a-a512-69cc5536299f';
 
 ?>
 
