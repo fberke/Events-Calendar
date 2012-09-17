@@ -12,7 +12,23 @@ Requirements
 3. Droplet(s) to place calendar somewhere on your website
 4. PHP 5.2 or above
 
-2012-09-03
+Development History
+===================
+2012-09-17
+- set version number to 1.5.2 to trigger module update
+
+2012-09-05 - 2012-09-13 fberke
+- bug fix custom fields not get saved
+- added feature subfolders are included when choosing an image
+- removed old comments from code
+- deleted unused files
+- wrote documentation (English only)
+- some little code optimizations
+- some little corrections in the templates
+- some little corrections in the CSS
+- other minor stuff
+
+2012-09-03 fberke
 Moved project to Github: https://github.com/fberke/Events-Calendar
 
 2012-05-19 - 2012-08-29 fberke

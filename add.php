@@ -23,15 +23,6 @@ if (defined('WB_PATH')) {
 // insert data into pages table
 $database->query("INSERT INTO ".TABLE_PREFIX."mod_eventscalendar_settings SET
 	page_id = '$page_id', 
-	section_id = '$section_id',
-	
-	usecustom1 = 0,
-	custom1 = '',
-	
-	usecustom2 = 0,
-	custom2 = '',
-	
-	usecustom3 = 0,
-	custom3 = ''
+	section_id = '$section_id'
 ");
 ?>
