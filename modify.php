@@ -21,7 +21,7 @@ if (defined('WB_PATH')) {
 
 require_once (WB_PATH.'/framework/functions.php');
 require_once ('dwoo_inc.php');
-require ('functions.php');
+require_once ('functions.php');
 
 // define constants
 define ("EVENTSCAL_IMAGE_PATH", WB_PATH.MEDIA_DIRECTORY.'/eventscalendar/');
