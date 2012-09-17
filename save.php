@@ -34,11 +34,14 @@ if (LANGUAGE_LOADED) {
 }
 
 //$update_when_modified = true;
-require(WB_PATH.'/modules/admin.php');
+require (WB_PATH.'/modules/admin.php');
 // Include WB functions file
-require(WB_PATH.'/framework/functions.php');
+require (WB_PATH.'/framework/functions.php');
+// needed to fill settings array; global variable doesn't work
+require ('functions.php');
 
 // Write immediately needed POST data into variables
+$section_id	= $admin->get_post('section_id');
 $deleteevent	= $admin->get_post('delete');
 $event_id	= $admin->get_post('event_id');
 $date_start	= $admin->get_post('date1');
@@ -47,6 +50,8 @@ $starttime_hrs = $admin->get_post('starttime_hrs'); // BE always 24 hr
 $starttime_mins = $admin->get_post('starttime_mins');
 $endtime_hrs	= $admin->get_post('endtime_hrs'); // BE always 24 hr
 $endtime_mins	= $admin->get_post('endtime_mins');
+
+$settings = fillSettingsArray ($section_id);
 
 	// Check values and correct them if necessary
 	if (!isset($date_start)) {
@@ -115,7 +120,6 @@ if (isset($deleteevent) && is_numeric($deleteevent)) { // delete from eventliste
 	$database->query($sql);
 	//$success = !$database->is_error();
 } else {
-	global $settings;
 	$usecustom1	= $settings["usecustom1"];
 	$usecustom2	= $settings["usecustom2"];
 	$usecustom3	= $settings["usecustom3"];
@@ -125,8 +129,6 @@ if (isset($deleteevent) && is_numeric($deleteevent)) { // delete from eventliste
 	$success = true;
 	$out = "";
 	$SaveAsNew	= $admin->get_post('saveasnew');
-	//$dateformat	= $admin->get_post('dateformat'); // PHP-like, Y-m-d and variations
-	//$timeformat	= $admin->get_post('timeformat'); // PHP-like, H:i and variations
 	$section_id	= $admin->get_post('section_id');
 	$page_id	= $admin->get_post('page_id');
 	$owner		= $admin->get_post('owner');
@@ -192,11 +194,12 @@ if (isset($deleteevent) && is_numeric($deleteevent)) { // delete from eventliste
 	}
 	
 	$image	= saveImage('image_upload', $image);
-	if ($usecustom1 <> 0) $custom1 = $admin->get_post_escaped('custom1');
+	
+	$custom1 = ($usecustom1) ? $admin->get_post_escaped('custom1') : "Falsche Abfrage!";
 	if ($usecustom1 == 4) $custom1 = saveImage('custom_image1', $custom1);
-	if ($usecustom2 <> 0) $custom2 = $admin->get_post_escaped('custom2');
+	$custom2 = ($usecustom2 <> 0) ? $admin->get_post_escaped('custom2') : "";
 	if ($usecustom2 == 4) $custom2 = saveImage('custom_image2', $custom2);
-	if ($usecustom3 <> 0) $custom3 = $admin->get_post_escaped('custom3');
+	$custom3 = ($usecustom3 <> 0) ? $admin->get_post_escaped('custom3') : "";
 	if ($usecustom3 == 4) $custom3 = saveImage('custom_image3', $custom3);
 	
 	if(trim($event_title)!="") {
@@ -210,9 +213,9 @@ if (isset($deleteevent) && is_numeric($deleteevent)) { // delete from eventliste
 			$sql .= "date_end='$end_timestamp', ";
 			$sql .= "category='$category', ";
 			
-			if ($usecustom1 <> 0) $sql .= "custom1='$custom1', ";
-			if ($usecustom2 <> 0) $sql .= "custom2='$custom2', ";
-			if ($usecustom3 <> 0) $sql .= "custom3='$custom3', ";
+			$sql .= "custom1='$custom1', ";
+			$sql .= "custom2='$custom2', ";
+			$sql .= "custom3='$custom3', ";
 			
 			$sql .= "event_title='$event_title', ";
 			$sql .= "description='$description', ";
@@ -230,9 +233,9 @@ if (isset($deleteevent) && is_numeric($deleteevent)) { // delete from eventliste
 			$sql .= "date_end='$end_timestamp', ";
 			$sql .= "category='$category', ";
 			
-			if ($usecustom1 <> 0) $sql .= "custom1='$custom1', ";
-			if ($usecustom2 <> 0) $sql .= "custom2='$custom2', ";
-			if ($usecustom3 <> 0) $sql .= "custom3='$custom3', ";
+			$sql .= "custom1='$custom1', ";
+			$sql .= "custom2='$custom2', ";
+			$sql .= "custom3='$custom3', ";
 			
 			$sql .= "event_title='$event_title', ";
 			$sql .= "description='$description', ";
