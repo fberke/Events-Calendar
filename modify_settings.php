@@ -313,7 +313,7 @@ $maxprev		= $settings["maxprev"];
 	<input class="edit_field_short color" <?php echo $bgStyle; ?> data-hex="true" type="text" title="<?php echo $CALTEXT['CATEGORY_COLORCHOICE_HELP']; ?>" value="<?php echo $fillvalue; ?>" id="group_name" name="group_name">
 	</div>
 	<div class="details_section">
-	<label for=""><?php echo $CALTEXT['CATEGORY_USE_BGCOLOR']; ?></label>
+	<label for="use_category_color"><?php echo $CALTEXT['CATEGORY_USE_BGCOLOR']; ?></label>
 	<input type="checkbox" name="use_category_color" value="1" <?php echo $dayChecked; ?>>
 	<input type="hidden" name="category_color" value="<?php if (isset ($bghex)) echo $bghex; ?>">
 	</div>
@@ -376,15 +376,22 @@ $maxprev		= $settings["maxprev"];
 
         <h2><?php echo $CALTEXT['SUPPORT_INFO']; ?></h2>
         <?php echo $CALTEXT['SUPPORT_INFO_INTRO']; ?>
-        <a href="<?php if (LANGUAGE_LOADED) {
-        	if (file_exists(WB_PATH."/modules/eventscalendar/languages/support-".LANGUAGE.".php")) {
-        		echo (WB_URL."/modules/eventscalendar/languages/support-".LANGUAGE.".php?page_id=$page_id&amp;section_id=$section_id");
+        <a href="<?php
+        /*
+        if (LANGUAGE_LOADED) {
+        	if (file_exists(WB_PATH."/modules/eventscalendar/languages/support_".LANGUAGE.".php")) {
+        		echo (WB_URL."/modules/eventscalendar/languages/support_".LANGUAGE.".php?page_id=$page_id&amp;section_id=$section_id");
         	} else {
-        		echo (WB_URL."/modules/eventscalendar/languages/support-EN.php?page_id=$page_id&amp;section_id=$section_id");
+        		echo (WB_URL."/modules/eventscalendar/languages/support_EN.php?page_id=$page_id&amp;section_id=$section_id");
         	}
 	}
+	*/
+	echo (WB_URL."/modules/eventscalendar/languages/support_EN.php?page_id=$page_id&amp;section_id=$section_id");
 	?>">
 	<?php echo $CALTEXT['SUPPORT_INFO']; ?></a>.
+	<p>Support currently is available in English language only.
+        <br />Feel free to contribute to this calendar module by helping to translate it to any language you like or improve an existing one.</p>
+        
 	
         <h2><?php echo $CALTEXT['ADVANCED_SETTINGS']; ?></h2>
         <?php 
