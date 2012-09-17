@@ -136,7 +136,7 @@ label { /* formerly .field_title */
 	float:left;
 	width:180px;
 }
-label.main_editor {
+label.nofloat {
 	float: none;
 }
 .edit_label td {width:10px;}
@@ -159,8 +159,28 @@ label.main_editor {
 
 .customfields textarea {width:98%;height:80px;margin-bottom:20px;}
 
+#helppage {
+	width: 75%;
+}
+#helppage table {
+	background-color: #fff;
+}
+#helppage thead {
+	background-color: #ccc;
+}
+#helppage tr {
+	border-bottom: 1px solid #666;
+}
+#helppage tr.subheading {
+	background-color: #dedede;
+	font-weight: bold;
+}
+#helppage th, td {
+	vertical-align: top;
+}
+
 /*
-Needed css for DatePicker calendar. 
+Required CSS for DatePicker calendar. 
 DON'T CONVERT CAPITALS TO LOWERCASE! Datepicker will not function if set to lowercase!
 */
 TABLE.jCalendar {border-bottom:#000 1px solid;border-left:#000 1px solid;border-spacing:2px;border-collapse:separate;background:#aaa;border-top:#000 1px solid;border-right:#000 1px solid;}
