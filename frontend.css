@@ -1,7 +1,7 @@
 /*
-	.eventscalendar = the eventual displayed calandar
+	.eventscalendar = the eventually displayed calandar
 	#event_list = the list of events for the displayed month
-	.event_entry = details page of an event
+	#event_entry = details page of an event
 */
 
 /***************************************/
@@ -53,9 +53,6 @@
 	padding: 8px 0;
 	background-color: #efefef;
 }
-.eventscalendar thead abbr {
-	cursor: help;
-}
 .eventscalendar tbody {
 	border-bottom: 1px solid #ccc;
 }
@@ -78,14 +75,7 @@
 	border: 1px solid #ccc;
 }
 .eventscalendar tbody td.today.isevent>a {
-/*	padding: 7px 0;*/
 }
-/*
-	this class is used to hide some information from the visual style
-	Mo<span class="display_outside">nday</span> is more accessible than
-	solutions with 'abbr' or something else.
-	'display:none' or 'visibility:none' don't work here
-*/
 .eventscalendar tbody td>div {
 	position: absolute;
 	width: 16em;
@@ -119,6 +109,12 @@
 	background-color: transparent;
 	border: none;
 }
+/*
+	this class is used to hide some information from the visual style
+	Mo<span class="display_outside">nday</span> is more accessible than
+	solutions with 'abbr' or something else.
+	'display:none' or 'visibility:none' don't do the job here
+*/
 .eventscalendar .position_outside {
 	position: absolute;
 	left: -999em;
@@ -152,56 +148,44 @@
 	padding-left: 1%;
 	border-left: 1px solid #ccc;
 }
-
 #event_list table {
 	width: 100%;
 	border-collapse: collapse;
 	vertical-align: top;
 }
-/*
-#event_list thead tr {
-	border-top: 1px solid #ccc;
-	border-bottom: 1px solid #ccc;
+#event_list h2 { /* the date in events list */
 }
-#event_list thead th {
-	padding: 8px 0;
-	background-color: #efefef;
+#event_list h3>span { /* the event title in events list */
+	float: right;
+	width: 1.2em; /* to make it square-shaped set to same value as h3's font-size */
 }
-#event_list tbody {
-	border-bottom: 1px solid #ccc;
-}
-#event_list tbody td {
-	padding: 4px 2px;
-}
-#event_list tbody tr:nth-child(even) {
-	background:#efefef;
-}
-#event_list tbody tr:hover {
-	background:#ccc;
-}
-*/
+
 /***************************************/
 /*           EVENT_DETAILS             */
 /***************************************/
 #event_entry {
-	min-height:350px;
+	min-height: 350px;
 }
 #event_entry h1 {
 	padding-top: 0;
 	margin-top: 0;
 }
+#event_entry h1>span { /* same principle as in event_list */
+	float: right;
+	width: 1em;
+}
 #event_entry .details_section {
-	line-height:15px;
-	margin-bottom:8px;
+	line-height: 15px;
+	margin-bottom: 8px;
 }
 #event_entry aside {
-	float:right;
-	width:170px;
-	padding:10px;
-	border:1px solid #ccc;
-	background:#f4f4f4;
+	float: right;
+	width: 170px;
+	padding: 10px;
+	border: 1px solid #ccc;
+	background: #f4f4f4;
 	margin: 0 0 15px 15px;
-	background:#eee;
+	background: #eee;
 }
 #event_entry aside h4 {
 	font-size: normal;
@@ -211,12 +195,26 @@
 	margin-top: 0;
 }
 
-div.go_back a {
-	font-weight:bold;
-	text-decoration:none;
+/***************************************/
+/*        COMMONLY USED STYLES         */
+/***************************************/
+div.prevnext {
+	padding: 5px 0;
+	overflow: hidden;
 }
-div.go_back a:before {
-	content: "« ";
+div.prevnext span:first-child {
+	float: left;
+}
+div.prevnext span:last-child {
+	float: right;
+}
+div.go_back {
+	margin-top: 10px;
+	text-align: center;
+}
+div.go_back a {
+	font-weight: bold;
+	text-decoration: none;
 }
 
 /***************************************/
@@ -252,12 +250,3 @@ ul.drop_event_list {
 }
 .drop_event_list li p.custom2 {
 }
-
-/***************************************/
-/*    STYLES FOR THE MINIJS DROPLET    */
-/***************************************/
-/* copy these to your normal template stylesheet if you want to show the minicaljs on every page */
-table.inner {border-collapse:collapse;}
-table.inner td {border:1px solid #ccc;padding:2px;}
-table.inner .event {color:#01457f;font-weight:bold;}
-table.inner .event:hover {font-weight:bold;cursor:pointer;color:#f47325;}
