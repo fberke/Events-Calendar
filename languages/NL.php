@@ -121,7 +121,7 @@ $CALTEXT ['POPUP_MORE_LINKTITLE'] = "Show all events&hellip;";
 
 // ShowEventEntry
 $CALTEXT['DATE-AND-TIME'] = "Datum en tijd";
-$CALTEXT['TIMESTR'] = "uur";
+$CALTEXT['TIMESTR'] = "&nbsp;uur";
 $CALTEXT['NO_DESCRIPTION'] = "Geen beschrijving beschikbaar&hellip;";
 $CALTEXT['PREV_EVENT_LINK'] = "Previous Event";
 $CALTEXT['NEXT_EVENT_LINK'] = "Next Event";

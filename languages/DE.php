@@ -41,7 +41,7 @@ $CALTEXT['CUSTOM_FIELDS'] = "Eigene Felder";
 
 // modify_settings.php
 // Options
-$CALTEXT['CAL-OPTIONS'] = "Optionen";
+$CALTEXT['CAL-OPTIONS'] = "Einstellungen";
 $CALTEXT['CAL-OPTIONS-STARTDAY'] = "Woche beginnt am";
 $CALTEXT['CAL-OPTIONS-STARTDAY-0'] = "Montag";
 $CALTEXT['CAL-OPTIONS-STARTDAY-1'] = "Sonntag";
@@ -122,7 +122,7 @@ $CALTEXT ['POPUP_MORE_LINKTITLE'] = "Alle Events anzeigen&hellip;";
 
 // ShowEventEntry
 $CALTEXT['DATE-AND-TIME'] = "Datum und Uhrzeit";
-$CALTEXT['TIMESTR'] = "Uhr";
+$CALTEXT['TIMESTR'] = "&nbsp;Uhr";
 $CALTEXT['NO_DESCRIPTION'] = "Keine Beschreibung verfügbar&hellip;";
 $CALTEXT['PREV_EVENT_LINK'] = "Voriges Event";
 $CALTEXT['NEXT_EVENT_LINK'] = "Nächstes Event";

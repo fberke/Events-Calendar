@@ -40,7 +40,7 @@ $CALTEXT['CUSTOM_FIELDS'] = "Custom fields";
 
 // modify_settings.php
 // Options
-$CALTEXT['CAL-OPTIONS'] = "Options";
+$CALTEXT['CAL-OPTIONS'] = "Settings";
 $CALTEXT['CAL-OPTIONS-STARTDAY'] = "Week starts on";
 $CALTEXT['CAL-OPTIONS-STARTDAY-0'] = "Monday";
 $CALTEXT['CAL-OPTIONS-STARTDAY-1'] = "Sunday";
