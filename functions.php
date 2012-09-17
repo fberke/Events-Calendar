@@ -28,8 +28,6 @@ if (LANGUAGE_LOADED) {
   }
 }
 
-// include debug functions if you need
-// include ('functions_debug.php');
 
 //#######################################################################
 // returns count of days in given month
@@ -64,12 +62,12 @@ function Cell (
 	$column,
 	$firstday,
 	$dayscount,
-	$SecId
+	$section_id
 ) {
 //
 //#############################################################################
 
-if (IsStartDayMonday($SecId) == false) {
+if (IsStartDayMonday($section_id) == false) {
 	$retval = ($row - 1) * 7 + $column ;
 	if ($firstday < 7) $retval -= $firstday;
 } else {
@@ -107,8 +105,7 @@ return $rowcount;
 //#######################################################################
 function ShowDate (
 	$format,
-	$unixtime,
-	$showTimeStr = false
+	$unixtime
 ) {
 //
 // This function changes the given unixtime into human readable date or time formats 
@@ -133,190 +130,8 @@ if (strpos ($format, 'F') > 0) {
 		date ($format, $unixtime));
 }
 $output = date ($format, $unixtime);
-if ($showTimeStr) $output .= '&nbsp;'.$CALTEXT['TIMESTR'];
 return $output;
 }
-
-//#######################################################################
-function ShowCalendar (
-	$month,
-	$year,	
-	$events,
-	$section_id,
-	$page_id,
-	$IsBackend
-) {
-//
-//  Return: Complete Calendar
-//
-//####################################################################### 
-global $database, $admin, $wb;
-global $monthnames, $weekdays;
-global $settings;
-global $dwoo;
-global $CALTEXT;
-
-$header_prefix = '';
-
-	if ($IsBackend) {
-		$link_prefix = 'modify.php';
-		$header_prefix = $link_prefix;
-	} else 	if ($page_id <> 0) {
-		$sql = "SELECT link FROM ".TABLE_PREFIX."pages WHERE page_id = '".$page_id."'";
-		$result = $database->query($sql);
-		if ($result->numRows() > 0) {
-			while( $row = $result->fetchRow() ) {
-				$link_prefix = page_link($row['link']);
-			}
-		}
-	} else $link_prefix = ''; // links won't work then
-	
-	($month > 1) ? ($prevmonth = $month - 1) : ($prevmonth = 12);
-	($month < 12) ? ($nextmonth = $month + 1) : ($nextmonth = 1);
-	($month == 1) ? ($prevyear = $year - 1) : ($prevyear = $year);
-	($month == 12) ? ($nextyear = $year + 1) : ($nextyear = $year);
-	
-	$dayscount = DaysCount ($month, $year);
-	$firstday  = FirstDay ($month, $year);
-	
-	$sizeofEvents = sizeof($events);
-	
-	// Fill caption
-	$caption = array (
-		'previousYearLink' => $header_prefix.'?page_id=' . $page_id . '&amp;month=' . $month . '&amp;year=' . ($year-1),
-		'previousYearLinkTitle' => ($year-1),
-		'previousMonthLink' => $header_prefix.'?page_id=' . $page_id . '&amp;month=' . $prevmonth . '&amp;year=' . $prevyear,
-		'previousMonthLinkTitle' => $monthnames[(int)$prevmonth],
-		'monthname' => $monthnames[$month],
-		'year' => $year,
-		'nextMonthLink' => $header_prefix.'?page_id=' . $page_id . '&amp;month=' . $nextmonth . '&amp;year=' . $nextyear,
-		'nextMonthLinkText' => $monthnames[(int)$nextmonth],
-		'nextYearLink' => $header_prefix.'?page_id=' . $page_id . '&amp;month=' . $month . '&amp;year=' . ($year+1),
-		'nextYearLinkTitle' => ($year+1)
-		);
-	
-	$show_prev_dates = $settings["show_prev_dates"];
-	
-	$today = date('Ynj');
-	
-	$rowcount = GetCalRowCount ($dayscount, $firstday ,$section_id);
-	
-	// Fill table head
-	$thead = array ();
-	if (!IsStartDayMonday($section_id)) {
-		$colstart = 0;
-		$colend = 6;
-	} else {
-		$colstart = 1;
-		$colend = 7;
-	}
-	for ($column = $colstart; $column <= $colend; $column++) {
-		$thead [] = $weekdays[$column];
-	}
-	
-	// Fill actual calendar: rows and cells
-	$rows = array ();
-	
-	for ($row = 1; $row <= $rowcount; $row++) {
-		
-		$cells = array ();
-		
-		for ($col = 1; $col <= 7; $col++) {
-			
-			$daysContents = array ();
-			
-			$day = Cell ($row, $col, $firstday, $dayscount, $section_id);
-			
-			if ($day != 0) {
-				$anyday = $year.$month.$day;
-				$istoday = ($today == $anyday);
-				//echo "<p>$anyday - $today</p>";
-				$HideAnyway = ((!$show_prev_dates) && ($anyday < $today) && (!$IsBackend));
-				
-				if (DateHasEvent($day, $month, $year, $events) && (!$HideAnyway)) {
-					
-					$eventEntries = array ();
-					
-					$daysContents ['dayType'] = ($IsBackend) ? 'eventBE' : 'event';
-					$daysContents ['dayNr'] = $day;
-					$daysContents ['monthname'] = $monthnames[$month];
-					$daysContents ['isToday'] = $istoday;
-					// F+B: Create link to event list
-					$daysContents ['eventListLink'] = $link_prefix.'?page_id='.$page_id.'&amp;day='.$day.'&amp;month='.$month.'&amp;year='.$year.'&amp;list';
-					
-					if (($settings['maxprev'] > 0) && (!$IsBackend)) {
-						
-						$dayevents = returnEventList ($day, $month, $year, $events, $section_id);
-						
-						$exceedsMaxprev = (sizeof ($dayevents) > $settings['maxprev']);
-						(!$exceedsMaxprev) ? $max = sizeof ($dayevents) : $max = $settings['maxprev'];
-					
-						$daysContents ['eventListHeading'] = $CALTEXT['POPUP_HEADING'].ShowDate ($settings['dateformat'], mktime (0,0,0, $month, $day, $year));
-						
-						for ($i = 0; $i < $max; $i++) {
-							
-							$single = $dayevents[$i];
-							
-							$eventDetails = array (
-								'eventType' => 'event',
-								'eventDetailsLink' => $link_prefix.$single['event_link'],
-								'eventDetailsLinkTitle' => $CALTEXT['POPUP_LINK_TITLE'],
-								'eventTitle' => $single['event_title'],
-								'eventOneliner' => $single['oneliner'],
-								'eventCategory' => $single['category_name'],
-								'eventColor' => ($single['use_category_color']) ? $single['category_color'] : 'transparent',
-								'eventTime' => ShowDate ($settings['timeformat'], $single['date_start'], true)
-								);
-							 
-							$eventEntries [] = $eventDetails;
-						}
-						if ($exceedsMaxprev) {
-							$eventDetails = array (
-								'eventType' => 'link',
-								'eventListLink' => $link_prefix.'?page_id='.$page_id.'&amp;day='.$day.'&amp;month='.$month.'&amp;year='.$year.'&amp;list',
-								'eventListLinkTitle' => $CALTEXT['POPUP_MORE_LINKTITLE'],
-								'eventListLinkText' => $CALTEXT['POPUP_MORE_LINKTEXT']
-								);
-							$eventEntries [] = $eventDetails;
-						}
-						
-						$daysContents ['events'] = $eventEntries;
-						
-					}
-				} else { // Empty cell
-					// Backend: Create new event link
-					$daysContents ['dayType'] = 'normal';
-					$daysContents ['dayNr'] = ($IsBackend) ? '<a href="'.$link_prefix.'?page_id='.$page_id.'&amp;day='.$day.'&amp;month='.$month.'&amp;year='.$year.'&amp;edit=new">'.$day.'</a>' : $day;
-					$daysContents ['monthname'] = $monthnames[$month];
-					$daysContents ['isToday'] = $istoday;
-				}
-			} else {
-				if ($day == 0) { // day belongs to other month
-					$daysContents ['dayType'] = 'noday';
-					$daysContents ['dayNr'] = $day;
-				}
-			}
-		$cells [] = $daysContents;	
-		}
-	$rows []['cells'] = $cells;	
-	}
-	
-	// build final calendar array
-	$calendar = array ();
-	$calendar ['caption'] = $caption;
-	$calendar ['thead'] = $thead;
-	$calendar ['rows'] = $rows;
-	
-	//print_r ($calendar);
-	
-	// populate template
-	$data = $dwoo -> get (EVENTSCAL_TEMPLATE_PATH.'calendar.tpl', $calendar);
-	// Make sure wblinks and droplets are executed;
-	if (!$IsBackend) $wb->preprocess($data);
-	
-	return $data;
-}
-
 
 
 //########################################################################
@@ -338,10 +153,10 @@ global $CALTEXT;
 global $database, $admin, $wb;
 global $settings;
 
-($month > 1)   ? ($prevmonth = $month - 1) :  ($prevmonth = 12);
-($month < 12)  ? ($nextmonth = $month + 1) :  ($nextmonth = 1);
-($month == 1)  ? ($prevyear = $year - 1)   : ($prevyear = $year);
-($month == 12) ? ($nextyear = $year + 1)   : ($nextyear = $year);
+($month > 1) ? ($prevmonth = $month - 1) : ($prevmonth = 12);
+($month < 12) ? ($nextmonth = $month + 1) : ($nextmonth = 1);
+($month == 1) ? ($prevyear = $year - 1) : ($prevyear = $year);
+($month == 12) ? ($nextyear = $year + 1) : ($nextyear = $year);
 
 $dayscount = DaysCount($month, $year); 
 
@@ -387,11 +202,13 @@ $count = 0;
 }
 
 
-
+//########################################################################
 function fullEventsArray (
 	$section_id
 	) {
-
+// returns an array of ID, DATE_START, DATE_END for all events completely
+// depending on given section_id and the allowed user
+//########################################################################
 global $database, $admin;
 global $settings;
 
@@ -416,9 +233,7 @@ $db = $database->query($sql);
 
 if ($db->numRows() > 0) {
 	$events = array();
-	//print_r ($db->numRows());
 	while ($record = $db->fetchRow()) {
-		//$events[$record['id']] = $record['date_start'];
 		$events [] = $record;
 	}
 	return ($events);
@@ -614,131 +429,6 @@ return true;
 }
 
 
-//#############################################################################
-// Only used in backend!
-function ShowEventListEditor
-(
-	$events,
-	$day = NULL,
-	$page_id = NULL
-) {
-// Funktion ist darauf ausgelegt, stumpf die Eventliste auszugeben - im Array stehen ohnehin nur die Events des jeweiligen Monats.
-// Ein Tag wird deshalb auch meist nicht mit übergeben, sondern nur, wenn im Kalender ein Tag ausgewählt wurde. In diesem Fall
-// liefert 'MarkDayOK' auch nur die Events des gewählten Tages.
-//#############################################################################
-global $database;
-global $section_id;
-global $categories,$monthnames;
-global $month, $year;
-global $CALTEXT, $private;
-
-$HeaderText = $monthnames[$month].' '.$year;
-
-$sizeofEvents = sizeof($events);
-
-if ($sizeofEvents > 0) {
-	?>
-	<div class="event_list">
-	
-	<form name="eventlisteditor" action="<?php echo WB_URL; ?>/modules/eventscalendar/save.php" method="post">
-	<input type="hidden" name="page_id" value="<?php echo $page_id; ?>" />
-	<input type="hidden" name="section_id" value="<?php echo $section_id; ?>" />
-	
-	<table class="event_list_table">
-	<caption><?php echo $HeaderText; ?></caption>
-	<thead>
-		<tr>
-		<th><?php echo $CALTEXT['DATE']; ?></th>
-		<th><?php echo $CALTEXT['NAME']; ?></th>
-		<th><?php echo $CALTEXT['OWNER']; ?></th>
-		<th><?php echo $CALTEXT['CATEGORY']; ?></th>
-		<th><?php echo $CALTEXT['ACTION']; ?></th>
-		</tr>
-	</thead>
-	<tbody>
-	<?php
-	
-	$sql = "SELECT user_id, username  FROM ".TABLE_PREFIX."users";
-	$db = $database->query($sql);
-	//$users[0] = $CALTEXT['OWNER_PUBLIC'];
-	while ($rec = $db->fetchRow()) {
-		$users[$rec['user_id']] = $rec['username'];
-	}
-		
-	
-	for ($i = 0; $i < $sizeofEvents; $i++) {
-		$tmp = $events[$i];
-		
-		$yearstart	= date('Y', $tmp['date_start']);
-		$monthstart	= date('n', $tmp['date_start']);
-		$daystart	= date('j', $tmp['date_start']);
-		
-		$yearend	= date('Y', $tmp['date_end']);
-		$monthend	= date('n', $tmp['date_end']);
-		$dayend	= date('j', $tmp['date_end']);
-
-		if (($day == NULL) || MarkDayOK($day, $month, $year, $events[$i])) {
-			$link = 'modify.php?month='.$monthstart.'&amp;year='.$yearstart.'&amp;day='.$daystart.'&amp;id='.$tmp['id'].'&amp;edit=edit';		
-			if (isset($page_id)) {
-				$link .= "&amp;page_id=$page_id";
-			}
-			?>
-		<tr>
-		
-		<td>
-		<?php
-		echo date ('Y-m-d', $tmp['date_start']);
-		if ($yearstart.$monthstart.$daystart != $yearend.$monthend.$dayend) { //only show end date if event has multiple days
-			echo ' '.$CALTEXT['DATE_DIVIDER'].' '.date ('Y-m-d', $tmp['date_end']);
-		}
-		?>
-		</td>
-		
-		<td>
-		<?php
-		echo '<a href="'.$link.'&amp;id='.$tmp["id"].'">'.$tmp['event_title'].'</a>';
-		?>
-		</td>
-		
-		<td>
-		<?php
-		$icon = ($tmp['private']) ? 'private' : 'visible';
-		$owner = (isset($users[$tmp['owner']])) ? $users[$tmp['owner']] : 'N/A';
-		echo '<img src="'.THEME_URL.'/images/'.$icon.'_16.png" alt="'.$private[$tmp['private']].'" title="'.$private[$tmp['private']].'" />&nbsp;'.$owner;	
-		?>
-		</td>
-		
-		<td><?php
-		if (($tmp['category'] != 0) && (array_key_exists($tmp['category'], $categories))) {
-			//&& ($categories[$tmp['category']] != null)) {
-			echo $categories[$tmp['category']];	
-		}
-		?>
-		</td>
-		
-		<td>
-		<?php
-		echo '<button class="delete" type="submit" name="delete" value="'.$tmp["id"].'" />'.$CALTEXT['BTN_DELETE'].'</button>';
-		?>
-		</td>
-		</tr>
-		<?php
-		}
-	}
-	?>
-	</tbody>
-	</table>
-	</form>
-	<?php
-	if ($day != NULL) echo '<button onclick="window.location=\''.ADMIN_URL.'/pages/modify.php?page_id='.$page_id.'&amp;month='.$month.'&amp;year='.$year.'\'">'.$CALTEXT["CALENDAR-BACK-MONTH"].'</button>';
-	?>
-	</div>
-	
-	<?php
-} else echo $CALTEXT['NODATES'];
-}
-
-
 //######################################################################
 function returnNeighbouringEvent (
 	$event_id,
@@ -796,59 +486,187 @@ return false; // event doesn't exist
 }
 
 
-//######################################################################
-function ShowEventEntry (
-	$tmp, // event details array
-	$section_id
+//#######################################################################
+function ShowCalendar (
+	$month,
+	$year,	
+	$events,
+	$section_id,
+	$page_id,
+	$IsBackend
 ) {
 //
-//  Return: nothing
+//  Return: Complete Calendar
 //
-//######################################################################
-global $CALTEXT;
-global $page_id;
+//####################################################################### 
 global $database, $admin, $wb;
-global $day, $month, $year;
+global $monthnames, $weekdays;
 global $settings;
 global $dwoo;
+global $CALTEXT;
 
-$monthstart = date ('n', $tmp['date_start']);
-$yearstart  = date ('Y', $tmp['date_start']);
+$header_prefix = '';
 
-$eventsarr = array (
-	'eventTitle' => $tmp['event_title'],
-	'eventDateStartTitle' => $CALTEXT['DATE_START'],
-	'eventDateEndTitle' => $CALTEXT['DATE_END'],
-	'eventDateStart' => ShowDate ($settings["dateformat"], $tmp['date_start']),
-	'eventDateEnd' => ShowDate ($settings["dateformat"], $tmp['date_end']),
-	'eventTimeStart' => ShowDate ($settings["timeformat"], $tmp['date_start'], true),
-	'eventTimeEnd' => ShowDate ($settings["timeformat"], $tmp['date_end'], true),
-	'eventCategoryTitle' => $CALTEXT['CATEGORY'],
-	'eventCategory' => ($tmp['category'] > 0) ? $tmp['category'] : 'NA',
-	'eventImageURL' => ($tmp['image'] != '') ? EVENTSCAL_IMAGE_URL.$tmp['image'] : '',
-	'eventDescription' => (($tmp['description']) != "") ? $tmp['description'] : $CALTEXT['NO_DESCRIPTION'],
-	'eventDroplet' => $tmp['droplet'],
-	'eventCategory' => $tmp['category_name'],
-	'eventColor' => ($tmp['use_category_color']) ? $tmp['category_color'] : 'transparent',
-	'prevEventLinkTitle' => $CALTEXT['PREV_EVENT_LINK'],
-	'prevEventLink' => $tmp ['prevEvent'],
-	'nextEventLinkTitle' => $CALTEXT['NEXT_EVENT_LINK'],
-	'nextEventLink' => $tmp ['nextEvent'],
-	'eventListLinkTitle' => $CALTEXT['EVENT_LIST_LINK'],
-	'eventListLink' => '?page_id='.$page_id.'&amp;month='.$month.'&amp;year='.$year.'&amp;list'
-	);
-
-// Add custom fields
-if (($settings ['usecustom1'] <> 0 && $tmp['custom1'] <> '' )) $eventsarr ['custom1'] = $tmp['custom1'];
-if (($settings ['usecustom2'] <> 0 && $tmp['custom2'] <> '' )) $eventsarr ['custom2'] = $tmp['custom2'];
-if (($settings ['usecustom3'] <> 0 && $tmp['custom3'] <> '' )) $eventsarr ['custom3'] = $tmp['custom3'];
-
-// populate template
-$data = $dwoo -> get (EVENTSCAL_TEMPLATE_PATH.'event_entry.tpl', $eventsarr);
-// Make sure wblinks and droplets are executed;
-$wb->preprocess($data);
-echo $data;
+	if ($IsBackend) {
+		$link_prefix = 'modify.php';
+		$header_prefix = $link_prefix;
+	} else 	if ($page_id <> 0) {
+		$sql = "SELECT link FROM ".TABLE_PREFIX."pages WHERE page_id = '".$page_id."'";
+		$result = $database->query($sql);
+		if ($result->numRows() > 0) {
+			while( $row = $result->fetchRow() ) {
+				$link_prefix = page_link($row['link']);
+			}
+		}
+	} else $link_prefix = ''; // links won't work then
+	
+	($month > 1) ? ($prevmonth = $month - 1) : ($prevmonth = 12);
+	($month < 12) ? ($nextmonth = $month + 1) : ($nextmonth = 1);
+	($month == 1) ? ($prevyear = $year - 1) : ($prevyear = $year);
+	($month == 12) ? ($nextyear = $year + 1) : ($nextyear = $year);
+	
+	$dayscount = DaysCount ($month, $year);
+	$firstday  = FirstDay ($month, $year);
+	
+	$sizeofEvents = sizeof($events);
+	
+	// Fill caption
+	$caption = array (
+		'previousYearLink' => $header_prefix.'?page_id=' . $page_id . '&amp;month=' . $month . '&amp;year=' . ($year-1),
+		'previousYearLinkTitle' => ($year-1),
+		'previousMonthLink' => $header_prefix.'?page_id=' . $page_id . '&amp;month=' . $prevmonth . '&amp;year=' . $prevyear,
+		'previousMonthLinkTitle' => $monthnames[(int)$prevmonth],
+		'monthname' => $monthnames[$month],
+		'year' => $year,
+		'nextMonthLink' => $header_prefix.'?page_id=' . $page_id . '&amp;month=' . $nextmonth . '&amp;year=' . $nextyear,
+		'nextMonthLinkTitle' => $monthnames[(int)$nextmonth],
+		'nextYearLink' => $header_prefix.'?page_id=' . $page_id . '&amp;month=' . $month . '&amp;year=' . ($year+1),
+		'nextYearLinkTitle' => ($year+1)
+		);
+	
+	$show_prev_dates = $settings["show_prev_dates"];
+	
+	$today = date('Ynj');
+	
+	$rowcount = GetCalRowCount ($dayscount, $firstday ,$section_id);
+	
+	// Fill table head
+	$thead = array ();
+	if (!IsStartDayMonday($section_id)) {
+		$colstart = 0;
+		$colend = 6;
+	} else {
+		$colstart = 1;
+		$colend = 7;
+	}
+	for ($column = $colstart; $column <= $colend; $column++) {
+		$thead [] = $weekdays[$column];
+	}
+	
+	// Fill actual calendar: rows and cells
+	$rows = array ();
+	
+	for ($row = 1; $row <= $rowcount; $row++) {
+		
+		$cells = array ();
+		
+		for ($col = 1; $col <= 7; $col++) {
+			
+			$daysContents = array ();
+			
+			$day = Cell ($row, $col, $firstday, $dayscount, $section_id);
+			
+			if ($day != 0) {
+				$anyday = $year.$month.$day;
+				$istoday = ($today == $anyday);
+				//echo "<p>$anyday - $today</p>";
+				$HideAnyway = ((!$show_prev_dates) && ($anyday < $today) && (!$IsBackend));
+				
+				if (DateHasEvent($day, $month, $year, $events) && (!$HideAnyway)) {
+					
+					$eventEntries = array ();
+					
+					$daysContents ['dayType'] = ($IsBackend) ? 'eventBE' : 'event';
+					$daysContents ['dayNr'] = $day;
+					$daysContents ['monthname'] = $monthnames[$month];
+					$daysContents ['isToday'] = $istoday;
+					// F+B: Create link to event list
+					$daysContents ['eventListLink'] = $link_prefix.'?page_id='.$page_id.'&amp;day='.$day.'&amp;month='.$month.'&amp;year='.$year.'&amp;list';
+					
+					if (($settings['maxprev'] > 0) && (!$IsBackend)) {
+						
+						$dayevents = returnEventList ($day, $month, $year, $events, $section_id);
+						
+						$exceedsMaxprev = (sizeof ($dayevents) > $settings['maxprev']);
+						(!$exceedsMaxprev) ? $max = sizeof ($dayevents) : $max = $settings['maxprev'];
+					
+						$daysContents ['eventListHeading'] = $CALTEXT['POPUP_HEADING'].ShowDate ($settings['dateformat'], mktime (0,0,0, $month, $day, $year));
+						
+						for ($i = 0; $i < $max; $i++) {
+							
+							$single = $dayevents[$i];
+							
+							$eventDetails = array (
+								'eventType' => 'event',
+								'eventDetailsLink' => $link_prefix.$single['event_link'],
+								'eventDetailsLinkTitle' => $CALTEXT['POPUP_LINK_TITLE'],
+								'eventTitle' => $single['event_title'],
+								'eventOneliner' => $single['oneliner'],
+								'eventCategory' => $single['category_name'],
+								'eventColor' => ($single['use_category_color']) ? $single['category_color'] : 'transparent',
+								'eventTime' => ShowDate ($settings['timeformat'], $single['date_start']),
+								'eventTimestring' => $CALTEXT['TIMESTR']
+								);
+							 
+							$eventEntries [] = $eventDetails;
+						}
+						if ($exceedsMaxprev) {
+							$eventDetails = array (
+								'eventType' => 'link',
+								'eventListLink' => $link_prefix.'?page_id='.$page_id.'&amp;day='.$day.'&amp;month='.$month.'&amp;year='.$year.'&amp;list',
+								'eventListLinkTitle' => $CALTEXT['POPUP_MORE_LINKTITLE'],
+								'eventListLinkText' => $CALTEXT['POPUP_MORE_LINKTEXT']
+								);
+							$eventEntries [] = $eventDetails;
+						}
+						
+						$daysContents ['events'] = $eventEntries;
+						
+					}
+				} else { // Empty cell
+					// Backend: Create new event link
+					$daysContents ['dayType'] = 'normal';
+					$daysContents ['dayNr'] = ($IsBackend) ? '<a href="'.$link_prefix.'?page_id='.$page_id.'&amp;day='.$day.'&amp;month='.$month.'&amp;year='.$year.'&amp;edit=new">'.$day.'</a>' : $day;
+					$daysContents ['monthname'] = $monthnames[$month];
+					$daysContents ['isToday'] = $istoday;
+				}
+			} else {
+				if ($day == 0) { // day belongs to other month
+					$daysContents ['dayType'] = 'noday';
+					$daysContents ['dayNr'] = $day;
+				}
+			}
+		$cells [] = $daysContents;	
+		}
+	$rows []['cells'] = $cells;	
+	}
+	
+	// build final calendar array
+	$calendar = array ();
+	$calendar ['caption'] = $caption;
+	$calendar ['thead'] = $thead;
+	$calendar ['rows'] = $rows;
+	
+	//print_r ($calendar);
+	
+	// populate template
+	$data = $dwoo -> get (EVENTSCAL_TEMPLATE_PATH.'calendar.tpl', $calendar);
+	// Make sure wblinks and droplets are executed;
+	if (!$IsBackend) $wb->preprocess($data);
+	
+	return $data;
 }
+
 
 //######################################################################
 function ShowEventList (
@@ -869,9 +687,11 @@ global $dwoo;
 $sizeofEvents = sizeof ($events);
 $daysinMonth = DaysCount ($month, $year);
 
-$eventsarr = array ();
+$eventsarr = false;
 
 if ($sizeofEvents > 0 ) {
+	
+	$eventsarr = array ();
 	
 	$data = new Dwoo_Data ();
 	
@@ -888,6 +708,7 @@ if ($sizeofEvents > 0 ) {
 					'eventDetailsLink' => $entry['event_link'],
 					'eventDetailsLinkTitle' => $CALTEXT['POPUP_LINK_TITLE'],
 					'eventTitle' => $entry['event_title'],
+					'eventOneliner' => $entry['oneliner'],
 					'eventSummary' => $entry['summary'],
 					'eventDateStartTitle' => $CALTEXT['DATE_START'],
 					'eventDateStart' => ShowDate ($settings['dateformat'], $entry['date_start']),
@@ -895,6 +716,7 @@ if ($sizeofEvents > 0 ) {
 					'eventDateEndTitle' => $CALTEXT['DATE_END'],
 					'eventDateEnd' => ShowDate ($settings['dateformat'], $entry['date_end']),
 					'eventTimeEnd' => ShowDate ($settings['timeformat'], $entry['date_end']),
+					'eventTimestring' => $CALTEXT['TIMESTR'],
 					'eventCategoryTitle' => $CALTEXT['CATEGORY'],
 					'eventCategory' => $entry['category_name'],
 					'eventColor' => ($entry['use_category_color']) ? $entry['category_color'] : 'transparent'
@@ -907,7 +729,7 @@ if ($sizeofEvents > 0 ) {
 				);
 		}
 	}
-}	
+}
 	if ($month == 1) {
 		$prevmonth = 12;
 		$prevyear = $year - 1;
@@ -933,6 +755,64 @@ if ($sizeofEvents > 0 ) {
 		);
 	
 	return $dwoo -> get (EVENTSCAL_TEMPLATE_PATH.'event_list.tpl', $data);
+}
+
+
+//######################################################################
+function ShowEventEntry (
+	$entry, // event details array
+	$section_id
+) {
+//
+//  Return: nothing
+//
+//######################################################################
+global $CALTEXT;
+global $page_id;
+global $database, $admin, $wb;
+global $day, $month, $year;
+global $settings;
+global $dwoo;
+
+$monthstart = date ('n', $entry['date_start']);
+$yearstart  = date ('Y', $entry['date_start']);
+
+$eventsarr = array (
+	'eventTitle' => $entry['event_title'],
+	'eventDateStartTitle' => $CALTEXT['DATE_START'],
+	'eventDateEndTitle' => $CALTEXT['DATE_END'],
+	'eventDateStart' => ShowDate ($settings["dateformat"], $entry['date_start']),
+	'eventDateEnd' => ShowDate ($settings["dateformat"], $entry['date_end']),
+	'eventTimeStart' => ShowDate ($settings["timeformat"], $entry['date_start']),
+	'eventTimeEnd' => ShowDate ($settings["timeformat"], $entry['date_end']),
+	'eventTimestring' => $CALTEXT['TIMESTR'],
+	'eventCategoryTitle' => $CALTEXT['CATEGORY'],
+	'eventCategory' => ($entry['category'] > 0) ? $entry['category'] : 'NA',
+	'eventImageURL' => ($entry['image'] != '') ? EVENTSCAL_IMAGE_URL.$entry['image'] : '',
+	'eventOneliner' => $entry['oneliner'],
+	'eventSummary' => $entry['summary'],
+	'eventDescription' => (($entry['description']) != "") ? $entry['description'] : $CALTEXT['NO_DESCRIPTION'],
+	'eventDroplet' => $entry['droplet'],
+	'eventCategory' => $entry['category_name'],
+	'eventColor' => ($entry['use_category_color']) ? $entry['category_color'] : 'transparent',
+	'prevEventLinkTitle' => $CALTEXT['PREV_EVENT_LINK'],
+	'prevEventLink' => $entry ['prevEvent'],
+	'nextEventLinkTitle' => $CALTEXT['NEXT_EVENT_LINK'],
+	'nextEventLink' => $entry ['nextEvent'],
+	'eventListLinkTitle' => $CALTEXT['EVENT_LIST_LINK'],
+	'eventListLink' => '?page_id='.$page_id.'&amp;month='.$month.'&amp;year='.$year.'&amp;list'
+	);
+
+// Add custom fields
+$eventsarr ['custom1'] = (($settings ['usecustom1'] <> 0 && $entry['custom1'] <> '' )) ? $entry['custom1'] : false;
+$eventsarr ['custom2'] = (($settings ['usecustom2'] <> 0 && $entry['custom2'] <> '' )) ? $entry['custom2'] : false;
+$eventsarr ['custom3'] = (($settings ['usecustom3'] <> 0 && $entry['custom3'] <> '' )) ? $entry['custom3'] : false;
+
+// populate template
+$data = $dwoo -> get (EVENTSCAL_TEMPLATE_PATH.'event_entry.tpl', $eventsarr);
+// Make sure wblinks and droplets are executed;
+$wb->preprocess($data);
+echo $data;
 }
 
 
@@ -973,16 +853,16 @@ while ($page = $get_pages->fetchRow()) {
 		for($i = 1; $i <= $page['level']; $i++) { $title_prefix .= ' - '; }
 		$select_content = '';
 		if ($current == $page['page_id']) { $select_content = ' selected';  }
-		// $content .= '  <option value="'.$page['page_id'].'">'.$title_prefix.$page['page_title'].'</option>';
 		$content .= str_replace(array('[PAGE_ID]','[PAGE_TITLE]', '[SELECTED]'), array($page['page_id'], $title_prefix.$page['page_title'], $select_content),$templ);
 		parent_list($page['page_id'],$templ, $current);
 }
 return $content;
 }
 
+
 //######################################################################
 // Function added by PCWacht
-// Allow user to select a wbpage
+// Allow user to select a page link
 function select_pagelink (
 	$title,
 	$name,
@@ -993,16 +873,18 @@ function select_pagelink (
 // returns = nothing
 // 
 //######################################################################
-global $tmp;
-echo '<div class="details_section">';
-echo '  <label>'.$title.'</label>';
-$start = '  <select name="'.$name.'" id="'.$name.'" class="inputbox" size="1" style="width:410px;">';
-$start .= '    <option value="">'.$text.'</option>';
-$end = '  </select>';
+//global $tmp;
+$start = '<div class="details_section">';
+$start .= '<label for="'.$name.'">'.$title.'</label>';
+$start .= '<select name="'.$name.'" id="'.$name.'" class="inputbox" size="1" style="width:410px;">';
+$start .= '<option value="">'.$text.'</option>';
+$templ = '<option value="[PAGE_ID]" [SELECTED]>[PAGE_TITLE]</option>';
+$end = '</select>';
 $end .= '</div>';
-$templ = '  <option value="[PAGE_ID]" [SELECTED]>[PAGE_TITLE]</option>';
+
 echo $start.parent_list(0,$templ,$wbid).$end;
 }
+
 
 //######################################################################
 // Function added by PCWacht
@@ -1018,27 +900,171 @@ function select_image (
 //######################################################################
 global $CALTEXT;
 
-echo '<div class="details_section">';
-echo '  <label for="'.$label1.'">'.$CALTEXT['CUSTOM_UPLOAD_IMG'].'</label>';
-echo '  <input name="'.$label1.'" id="'.$label1.'" type="file" style="width:410px;" />';
-echo '</div>';
-echo '<div class="details_section">';
-echo '  <label for="'.$label2.'">'.$CALTEXT['CUSTOM_SELECT_IMG'].'</label>';
-echo '  <select name="'.$label2.'" id="'.$label2.'" size="1" style="width:410px;">';
-echo '    <option value="0" >'.$CALTEXT['CUSTOM_SELECT_IMG_1ST_OPTION'].'</option>';
-if ($handle = opendir(EVENTSCAL_IMAGE_PATH)) {
-	while (false !== ($file = readdir($handle))) {
-		if ($file != "." && $file != "..") {
-			echo '<option value="'.$file.'"';
-			if ($image == $file) echo ' selected="selected"';
-			echo '>'.$file.'</option>';
+function loopImageDir ($path, $level = 0) {
+// recursively loops through given image directory
+// visual grouping is done by adding left margins, the order of the files, however, remains PHP-like :-/
+	global $image;
+	$return = '';
+	$margin = 0.8 * $level;
+	
+	if ($handle = opendir($path)) {
+		while (false !== ($file = readdir($handle))) {
+			if ($file != "." && $file != ".." && $file != "index.php") {
+				if (is_dir ($path.'/'.$file) === true) {
+					$return .= '<optgroup style="margin-left:'.$margin.'em;" label="'.$file.'">&nbsp;</optgroup>'."\n";
+					$return .= loopImageDir ($path.'/'.$file, $level + 1);
+				} else {
+					$selected = ($image == $file) ? ' selected="selected"' : '';
+					$return .= '<option value="'.$file.'"'.$selected.' style="margin-left:'.$margin.'em;">'.$file.'</option>'."\n";
+				}
+			}
+		}
+		closedir($handle);
+	}
+	return $return;
+}
+
+$output = '<div class="details_section">'."\n";
+$output .= '<label for="'.$label1.'">'.$CALTEXT['CUSTOM_UPLOAD_IMG'].'</label>'."\n";
+$output .= '<input name="'.$label1.'" id="'.$label1.'" type="file" style="width:410px;" />'."\n";
+$output .= '</div>'."\n";
+$output .= '<div class="details_section">'."\n";
+$output .= '<label for="'.$label2.'">'.$CALTEXT['CUSTOM_SELECT_IMG'].'</label>'."\n";
+$output .= '<select name="'.$label2.'" id="'.$label2.'" size="1" style="width:410px;">'."\n";
+$output .= '<option value="0" >'.$CALTEXT['CUSTOM_SELECT_IMG_1ST_OPTION'].'</option>'."\n";
+$output .= loopImageDir (EVENTSCAL_IMAGE_PATH);
+$output .= '</select>'."\n";
+$output .= '</div>'."\n";
+
+echo $output;
+}
+
+
+//#############################################################################
+// Only used in backend!
+function ShowEventListEditor
+(
+	$events,
+	$day = NULL,
+	$page_id = NULL
+) {
+// Funktion ist darauf ausgelegt, stumpf die Eventliste auszugeben - im Array stehen
+// ohnehin nur die Events des jeweiligen Monats.
+// Ein Tag wird deshalb auch meist nicht mit übergeben, sondern nur, wenn im Kalender
+// ein Tag ausgewählt wurde. In diesem Fall liefert 'MarkDayOK' auch nur die Events
+// des gewählten Tages.
+//#############################################################################
+global $database;
+global $section_id;
+global $categories,$monthnames;
+global $month, $year;
+global $CALTEXT, $private;
+
+$HeaderText = $monthnames[$month].' '.$year;
+
+$sizeofEvents = sizeof($events);
+
+if ($sizeofEvents > 0) {
+	?>
+	<div class="event_list">
+	
+	<form name="eventlisteditor" action="<?php echo WB_URL; ?>/modules/eventscalendar/save.php" method="post">
+	<input type="hidden" name="page_id" value="<?php echo $page_id; ?>" />
+	<input type="hidden" name="section_id" value="<?php echo $section_id; ?>" />
+	
+	<table class="event_list_table">
+	<caption><?php echo $HeaderText; ?></caption>
+	<thead>
+		<tr>
+		<th><?php echo $CALTEXT['DATE']; ?></th>
+		<th><?php echo $CALTEXT['NAME']; ?></th>
+		<th><?php echo $CALTEXT['OWNER']; ?></th>
+		<th><?php echo $CALTEXT['CATEGORY']; ?></th>
+		<th><?php echo $CALTEXT['ACTION']; ?></th>
+		</tr>
+	</thead>
+	<tbody>
+	<?php
+	
+	$sql = "SELECT user_id, username  FROM ".TABLE_PREFIX."users";
+	$db = $database->query($sql);
+	//$users[0] = $CALTEXT['OWNER_PUBLIC'];
+	while ($rec = $db->fetchRow()) {
+		$users[$rec['user_id']] = $rec['username'];
+	}
+		
+	for ($i = 0; $i < $sizeofEvents; $i++) {
+		$tmp = $events[$i];
+		
+		$yearstart	= date('Y', $tmp['date_start']);
+		$monthstart	= date('n', $tmp['date_start']);
+		$daystart	= date('j', $tmp['date_start']);
+		
+		$yearend	= date('Y', $tmp['date_end']);
+		$monthend	= date('n', $tmp['date_end']);
+		$dayend	= date('j', $tmp['date_end']);
+
+		if (($day == NULL) || MarkDayOK($day, $month, $year, $events[$i])) {
+			$link = 'modify.php?month='.$monthstart.'&amp;year='.$yearstart.'&amp;day='.$daystart.'&amp;id='.$tmp['id'].'&amp;edit=edit';		
+			if (isset($page_id)) {
+				$link .= "&amp;page_id=$page_id";
+			}
+			?>
+		<tr>
+		
+		<td>
+		<?php
+		echo date ('Y-m-d', $tmp['date_start']);
+		if ($yearstart.$monthstart.$daystart != $yearend.$monthend.$dayend) { //only show end date if event has multiple days
+			echo ' '.$CALTEXT['DATE_DIVIDER'].' '.date ('Y-m-d', $tmp['date_end']);
+		}
+		?>
+		</td>
+		
+		<td>
+		<?php
+		echo '<a href="'.$link.'&amp;id='.$tmp["id"].'">'.$tmp['event_title'].'</a>';
+		?>
+		</td>
+		
+		<td>
+		<?php
+		$icon = ($tmp['private']) ? 'private' : 'visible';
+		$owner = (isset($users[$tmp['owner']])) ? $users[$tmp['owner']] : 'N/A';
+		echo '<img src="'.THEME_URL.'/images/'.$icon.'_16.png" alt="'.$private[$tmp['private']].'" title="'.$private[$tmp['private']].'" />&nbsp;'.$owner;	
+		?>
+		</td>
+		
+		<td><?php
+		if (($tmp['category'] != 0) && (array_key_exists($tmp['category'], $categories))) {
+			//&& ($categories[$tmp['category']] != null)) {
+			echo $categories[$tmp['category']];	
+		}
+		?>
+		</td>
+		
+		<td>
+		<?php
+		echo '<button class="delete float_right" type="submit" name="delete" value="'.$tmp["id"].'" />'.$CALTEXT['BTN_DELETE'].'</button>';
+		?>
+		</td>
+		</tr>
+		<?php
 		}
 	}
-	closedir($handle);
+	?>
+	</tbody>
+	</table>
+	</form>
+	<?php
+	if ($day != NULL) echo '<button onclick="window.location=\''.ADMIN_URL.'/pages/modify.php?page_id='.$page_id.'&amp;month='.$month.'&amp;year='.$year.'\'">'.$CALTEXT["CALENDAR-BACK-MONTH"].'</button>';
+	?>
+	</div>
+	
+	<?php
+} else echo $CALTEXT['NODATES'];
 }
-echo '</select>';
-echo '</div>';
-}
+
 
 //#############################################################################
 // this function is used in modify.php for adding new events and changing details of older events
@@ -1077,7 +1103,6 @@ if ($editMode == "new" || $editMode == "no") {
 	
 	// in modify.php $day is created with NULL when not in POST values
 	// but we want the current day
-	// if (($day == 0) && ($editMode == "new")) $day = date ('j');
 	if ($day == 0) $day = date ('j');
 	
 	$tmp['event_title'] = $CALTEXT['CALENDAR-DEFAULT-TEXT'];
@@ -1111,7 +1136,6 @@ $owner = $tmp['owner'];
 	<input type="hidden" name="page_id" value="<?php echo $page_id; ?>" />
 	<input type="hidden" name="section_id" value="<?php echo $section_id; ?>" />
 	<input type="hidden" name="owner" value="<?php echo $owner; ?>" />
-	<!--<input type="hidden" name="dateformat" value="<?php echo $dateformat; ?>" />-->
 	
 	<?php
 	$button_row  = '<div class="buttonrow">';
@@ -1195,7 +1219,7 @@ $owner = $tmp['owner'];
 		// MAIN EDITOR
 		?>
 		<div>
-		<label for="description"><?php echo $CALTEXT['DESCRIPTION']; ?></label>
+		<label for="description" class="nofloat"><?php echo $CALTEXT['DESCRIPTION']; ?></label>
 		<?php
 		show_wysiwyg_editor("description", "description", $tmp['description'], "99%", "400px");
 		?>
@@ -1303,14 +1327,14 @@ $owner = $tmp['owner'];
 // Adding variables for datepicker - sent to backend_body.js:
 // Only place where Y-m-d is used, calendar needs it!
 var MODULE_URL	= '<?php echo WB_URL; ?>/modules/eventscalendar';
-var firstDay 	= <?php echo $jscal_firstday; ?>; // Firstday, 0=sunday/1=monday
-var format 	= 'yyyy-mm-dd'; // International format in backend    
-var datestart 	= '<?php echo date('Y-m-d', $tmp['date_start']); ?>'; // start date in input field
-var dateend 	= '<?php echo date('Y-m-d', $tmp['date_end']); ?>'; // end date in input field
-var datefrom 	= '<?php echo date('Y-m-d', mktime(0, 0, 0, date('m'), date('d'), date('Y') - 1)); ?>';  // How long back?
+var firstDay = <?php echo $jscal_firstday; ?>; // Firstday, 0=sunday/1=monday
+var format = 'yyyy-mm-dd'; // International format in backend    
+var datestart = '<?php echo date('Y-m-d', $tmp['date_start']); ?>'; // start date in input field
+var dateend = '<?php echo date('Y-m-d', $tmp['date_end']); ?>'; // end date in input field
+var datefrom = '<?php echo date('Y-m-d', mktime(0, 0, 0, date('m'), date('d'), date('Y') - 1)); ?>';  // How long back?
 <?php // Set language file, if it exists
-	$jscal_lang = defined('LANGUAGE')?strtolower(LANGUAGE):'en';
-	$jscal_lang = $jscal_lang!=''?$jscal_lang:'en';
+	$jscal_lang = defined('LANGUAGE') ? strtolower(LANGUAGE) : 'en';
+	$jscal_lang = $jscal_lang != '' ? $jscal_lang : 'en';
 	
 	if(file_exists(WB_PATH."/modules/eventscalendar/js/lang/date_".$jscal_lang.".js")) {
 		echo 'var datelang = "date_'.$jscal_lang.'.js"';
@@ -1323,6 +1347,6 @@ var datefrom 	= '<?php echo date('Y-m-d', mktime(0, 0, 0, date('m'), date('d'), 
 </div> 
 
 <?php
-// End of function.
+// End of functions.php
 }
 ?>
