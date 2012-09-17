@@ -38,11 +38,11 @@ if (defined('WB_URL')) {
 		resize SMALLINT default '0',
 		dateformat VARCHAR(15) NOT NULL default 'd.m.Y',
 		usecustom1 TINYINT default '0',
-		custom1 VARCHAR(50) NOT NULL,
+		custom1 VARCHAR(50),
 		usecustom2 TINYINT default '0',
-		custom2 VARCHAR(50) NOT NULL,
+		custom2 VARCHAR(50),
 		usecustom3 TINYINT default '0',
-		custom3 VARCHAR(50) NOT NULL,
+		custom3 VARCHAR(50),
 		PRIMARY KEY (section_id))");
 	
 	$database->query("CREATE TABLE ".TABLE_PREFIX."mod_eventscalendar_events (
