@@ -1,5 +1,5 @@
 <div id="event_entry">
-	<h1>{$eventTitle}</h1>
+	<h1>{$eventTitle}<span title="{$eventCategory}" style="background-color:{$eventColor};">&nbsp;</span></h1>
 	<aside>
 		<div>
 		<h4>{$eventDateStartTitle}</h4>

@@ -1,5 +1,5 @@
 <div id="event_list">
-{if isset($events)}
+{if ($events != false)}
 <ul>
 {loop $events}
 	<li>
@@ -7,7 +7,7 @@
 		<ul>
 		{loop $entries}
 			<li>
-				<h3><span style="padding:10px;background-color:{$eventColor};">{$eventTitle}</span></h3>
+				<h3>{$eventTitle}<span title="{$eventCategory}" style="background-color:{$eventColor};">&nbsp;</span></h3>
 				
 				<div class="content_left">
 				{$eventSummary}
@@ -41,6 +41,8 @@
 {else}
 <p>{$noDates}</p>
 {/if}
-<a href="{$prevMonthLink}" title="{$prevMonthName}">{$prevMonthLinkText}</a>
-<a href="{$nextMonthLink}" title="{$nextMonthName}">{$nextMonthLinkText}</a>
+<div class="prevnext">
+<span><a href="{$prevMonthLink}" title="{$prevMonthName}">{$prevMonthLinkText}</a></span>
+<span><a href="{$nextMonthLink}" title="{$nextMonthName}">{$nextMonthLinkText}</a></span>
+</div>
 </div>

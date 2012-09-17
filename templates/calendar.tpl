@@ -7,7 +7,7 @@
 	</div>
 	{$caption.monthname}&nbsp;{$caption.year}
 	<div class="next">
-		<span><a href="{$caption.nextMonthLink}" title="{$caption.nextMonthLinkText}">&rsaquo;</a></span>
+		<span><a href="{$caption.nextMonthLink}" title="{$caption.nextMonthLinkTitle}">&rsaquo;</a></span>
 		<span><a href="{$caption.nextYearLink}" title="{$caption.nextYearLinkTitle}">&raquo;</a></span>
 	</div>
 	</caption>
@@ -39,7 +39,7 @@
 				{loop $events}
 					<li>
 					<a href="{$eventDetailsLink}" title="{$eventDetailsLinkTitle}{$eventTitle}">
-					<div style="background-color:{$eventColor}";>
+					<div style="background-color:{$eventColor};">
 						<h6>{$eventTitle}</h6>
 						<p>{$eventOneliner}</p>
 						<p>{$eventTime}</p>
