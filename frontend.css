@@ -227,12 +227,12 @@ ul.drop_event_list {
 .drop_event_list li {
 	list-style-type: none;
 }
-.drop_event_list li a>span {
+.drop_event_list li a>div {
 	display: block;
 	padding: 5px;
 	color: #000;
 }
-.drop_event_list li a>span:hover {
+.drop_event_list li a>div:hover {
 	background-color: #aaa;
 }
 	
