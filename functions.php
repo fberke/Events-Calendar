@@ -214,19 +214,19 @@ global $settings;
 
 	// same as in fillEventArray()
 	if ($admin->is_authenticated() && $admin->get_user_id() == 1) { // if user is admin show all events
-		$extrawhere = "";
+		$selectPrivate = "";
 	} else {
-		$extrawhere = "AND private = 0 "; // public events
+		$selectPrivate = "AND private = 0 "; // public events
 		if ($admin->is_authenticated()) { // if user is authenticated
 			$creatorOnly = ($settings['show_private_dates'] == 0) ? " AND (owner = " . $admin->get_user_id(). " )" : "";
-			$extrawhere .= " OR ( (private != 0)".$creatorOnly." )"; // add user's own private events
+			$selectPrivate .= " OR ( (private != 0)".$creatorOnly." )"; // add user's own private events
 		}
 	}
 
 $sql = "SELECT id, date_start, date_end 
 	FROM ".TABLE_PREFIX."mod_eventscalendar_events 
 	WHERE section_id='$section_id'
-	$extrawhere 
+	$selectPrivate 
 	ORDER BY date_start ASC";
 	
 $db = $database->query($sql);
@@ -294,7 +294,8 @@ function fillEventArray (
 	$datestart,
 	$dateend,
 	$section_id,
-	$event_id = false
+	$event_id = false,
+	$category = false
 ) {
 //
 //#############################################################################
@@ -302,19 +303,27 @@ global $database, $admin;
 global $settings;
 
 	if ($admin->is_authenticated() && $admin->get_user_id() == 1) { // if user is admin show all events
-		$extrawhere = "";
+		$selectPrivate = "";
 	} else {
-		$extrawhere = " AND private = 0 "; // public events
+		$selectPrivate = " AND private = 0 "; // public events
 		if ($admin->is_authenticated()) { // if user is authenticated
 			$creatorOnly = ($settings['show_private_dates'] == 0) ? " AND (owner = " . $admin->get_user_id(). " ) " : "";
-			$extrawhere .= " OR ( (private != 0)".$creatorOnly." ) "; // add user's own private events
+			$selectPrivate .= " OR ( (private != 0)".$creatorOnly." ) "; // add user's own private events
 		}
 	}
+	
 	if ($event_id == false) {
 		$selectByDate = " AND date_start <='$dateend' AND date_end >='$datestart' ";
 	} else {
 		$selectByDate = " AND a.id = '$event_id' ";
 	}
+	
+	if ($category == false) {
+		$selectByCategory = "";
+	} else {
+		$selectByCategory = " AND a.category = '$category' ";
+	}
+	// Note: event_id and category cannot go together or at least it wouldn't make much sense
 	
 	$sql = "SELECT a.*, e.category_name as category_name, e.category_color as category_color, e.use_category_color as use_category_color
 			FROM ".TABLE_PREFIX."mod_eventscalendar_events as a
@@ -322,7 +331,8 @@ global $settings;
   			ON a.category = e.id
   			WHERE a.section_id='$section_id'
  			$selectByDate
-  			$extrawhere
+ 			$selectByCategory
+  			$selectPrivate
   			ORDER BY date_start";
   			
   	$db = $database->query($sql);
