@@ -42,6 +42,8 @@ switch ($type) {
 		if ($delete) {
 			$sql = "DELETE FROM ".TABLE_PREFIX."mod_eventscalendar_categories WHERE id=$group_id";
 			$database->query($sql);
+			$sql = "UPDATE ".TABLE_PREFIX."mod_eventscalendar_events SET category='0' WHERE category='$group_id'";
+			$database->query($sql);
 		} else {
 			if ($group_name != "") {
 				if (($group_id == 0)) {
