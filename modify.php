@@ -27,7 +27,7 @@ require_once ('functions.php');
 define ("EVENTSCAL_IMAGE_PATH", WB_PATH.MEDIA_DIRECTORY.'/eventscalendar/');
 define ("EVENTSCAL_IMAGE_URL", WB_URL.MEDIA_DIRECTORY.'/eventscalendar/');
 define ("EVENTSCAL_TEMPLATE_PATH", WB_PATH.'/modules/eventscalendar/templates/');
-
+define ("EVENTSCAL_FQDN", ''); // create empty constant to avoid PHP errors from function fillEventArray
 
 $year=date('Y');
 $month=date('n');
