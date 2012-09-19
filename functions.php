@@ -542,9 +542,12 @@ $header_prefix = '';
 	if ($IsBackend) {
 		$link_prefix = 'modify.php';
 		$header_prefix = $link_prefix;
+		/*
 	} else 	if ($page_id <> 0) {
-		$link_prefix = "";
+		$link_prefix = EVENTSCAL_FQDN;
 	} else $link_prefix = ''; // links won't work then
+	*/
+	} else $link_prefix = EVENTSCAL_FQDN;
 	
 	($month > 1) ? ($prevmonth = $month - 1) : ($prevmonth = 12);
 	($month < 12) ? ($nextmonth = $month + 1) : ($nextmonth = 1);
@@ -636,7 +639,7 @@ $header_prefix = '';
 							
 							$eventDetails = array (
 								'eventType' => 'event',
-								'eventDetailsLink' => $link_prefix.$single['event_link'],
+								'eventDetailsLink' => $single['event_link'],
 								'eventDetailsLinkTitle' => $CALTEXT['POPUP_LINK_TITLE'],
 								'eventTitle' => $single['event_title'],
 								'eventOneliner' => $single['oneliner'],
