@@ -33,10 +33,10 @@
 </div>
 <div class="prevnext">
 {if $prevEventLink != false}
-<span><a href="{$prevEventLink}">{$prevEventLinkTitle}</a></span>
+<span class="prev"><a href="{$prevEventLink}">{$prevEventLinkTitle}</a></span>
 {/if}
 {if $nextEventLink != false}
-<span><a href="{$nextEventLink}">{$nextEventLinkTitle}</a></span>
+<span class="next"><a href="{$nextEventLink}">{$nextEventLinkTitle}</a></span>
 {/if}
 </div>
 <div class="go_back"><a title="{$eventListLinkTitle}" href="{$eventListLink}">{$eventListLinkTitle}</a></div>

@@ -42,7 +42,7 @@
 <p>{$noDates}</p>
 {/if}
 <div class="prevnext">
-<span><a href="{$prevMonthLink}" title="{$prevMonthName}">{$prevMonthLinkText}</a></span>
-<span><a href="{$nextMonthLink}" title="{$nextMonthName}">{$nextMonthLinkText}</a></span>
+<span class="prev"><a href="{$prevMonthLink}" title="{$prevMonthName}">{$prevMonthLinkText}</a></span>
+<span class="next"><a href="{$nextMonthLink}" title="{$nextMonthName}">{$nextMonthLinkText}</a></span>
 </div>
 </div>

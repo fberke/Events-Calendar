@@ -202,10 +202,10 @@ div.prevnext {
 	padding: 5px 0;
 	overflow: hidden;
 }
-div.prevnext span:first-child {
+div.prevnext .prev {
 	float: left;
 }
-div.prevnext span:last-child {
+div.prevnext .next {
 	float: right;
 }
 div.go_back {
