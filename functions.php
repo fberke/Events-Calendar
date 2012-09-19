@@ -263,6 +263,7 @@ global $database;
 	}
 }
 
+
 //#############################################################################
 // this function returns array filled event types grabbed from database
 function fillSettingsArray (
@@ -278,12 +279,33 @@ global $database;
 		$record = $db->fetchRow();
 		return $record;
 	} 
-	return false;
+	else return false;
 }
+
+
+//#############################################################################
+// this function returns a fully qualified domain name plus path to the calendar page
+// this is necessary to make esp. droplets work on any sub page.
+function returnCalPageURL (
+	$page_id
+	) {
+//#############################################################################
+global $database;
+
+	$sql = "SELECT link FROM ".TABLE_PREFIX."pages WHERE page_id = '".$page_id."'";
+	$db = $database->query($sql);
+	if ($db->numRows() > 0) {
+		$record = $db->fetchRow();
+		$return = page_link($record ['link']);
+		return $return;
+	}
+	else return "";
+}	
+
 
 //#############################################################################
 // this function only used for fillEventArray
-function cmp($a, $b) {
+function cmp ($a, $b) {
 	if ($a['date_start'] == $b['date_start']) {
 		return 0;
 	}
@@ -349,7 +371,7 @@ global $settings;
 			$yearstart	= date('Y', $ret['date_start']);
 			
 			$link_pre = rawurlencode ($ret['event_title']);
-			$link = "?$link_pre&amp;month=$monthstart&amp;year=$yearstart&amp;day=$daystart";
+			$link = EVENTSCAL_FQDN."?$link_pre&amp;month=$monthstart&amp;year=$yearstart&amp;day=$daystart";
 			if (isset($page_id)) {
 				$link .= "&amp;page_id=$page_id";
 			}
@@ -521,13 +543,7 @@ $header_prefix = '';
 		$link_prefix = 'modify.php';
 		$header_prefix = $link_prefix;
 	} else 	if ($page_id <> 0) {
-		$sql = "SELECT link FROM ".TABLE_PREFIX."pages WHERE page_id = '".$page_id."'";
-		$result = $database->query($sql);
-		if ($result->numRows() > 0) {
-			while( $row = $result->fetchRow() ) {
-				$link_prefix = page_link($row['link']);
-			}
-		}
+		$link_prefix = "";
 	} else $link_prefix = ''; // links won't work then
 	
 	($month > 1) ? ($prevmonth = $month - 1) : ($prevmonth = 12);
@@ -581,6 +597,8 @@ $header_prefix = '';
 		$cells = array ();
 		
 		for ($col = 1; $col <= 7; $col++) {
+			
+			//print_r ($link_prefix."\n");
 			
 			$daysContents = array ();
 			

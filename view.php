@@ -59,6 +59,8 @@ if (isset($_GET['id'])) {
 	$event_id = 0;
 }
 
+define ("EVENTSCAL_FQDN", returnCalPageURL ($page_id));
+
 $date_start = mktime (0, 0, 0, $month, 1, $year);
 $date_end = mktime (23, 59, 59, $month, DaysCount($month,$year), $year);
 
