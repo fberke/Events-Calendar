@@ -40,14 +40,15 @@ switch ($type) {
 		if (!isset($use_category_color)) $use_category_color = 0;
 		
 		if ($delete) {
-			$sql = "DELETE FROM ".TABLE_PREFIX."mod_eventscalendar_categories WHERE id=$group_id";
+			// delete the category itself
+			$sql = "DELETE FROM ".TABLE_PREFIX."mod_eventscalendar_categories WHERE id='$group_id'";
 			$database->query($sql);
+			// delete its reference from the events
 			$sql = "UPDATE ".TABLE_PREFIX."mod_eventscalendar_events SET category='0' WHERE category='$group_id'";
 			$database->query($sql);
 		} else {
 			if ($group_name != "") {
 				if (($group_id == 0)) {
-					//echo "INSERT -> page_id: $page_id - group_name: $group_name  <br>";
 					$sql = "INSERT INTO ";
 					$sql .= TABLE_PREFIX."mod_eventscalendar_categories SET ";
 					$sql .= "section_id='$section_id', ";
@@ -55,7 +56,6 @@ switch ($type) {
 					$sql .= "category_color='$category_color', ";
 					$sql .= "use_category_color='$use_category_color' ";
 				} else {
-					//echo "UPDATE -> group_id: <br>";
 					$sql = "UPDATE ";
 					$sql .= TABLE_PREFIX."mod_eventscalendar_categories SET ";
 					$sql .= "section_id='$section_id', ";
